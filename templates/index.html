@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Modelo de Predicción</title>
+    <script>
+        function predecir(event) {
+            event.preventDefault();
+            const years = document.getElementById('years').value;
+            const rating = document.getElementById('rating').value;
+            const condition = document.getElementById('condition').value;
+            const economy = document.getElementById('economy').value;
+            const hp = document.getElementById('hp').value;
+
+            fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `years=${years}&rating=${rating}&condition=${condition}&economy=${economy}&hp=${hp}`,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById('resultado').innerText = 'Error: ' + data.error;
+                } else {
+                    document.getElementById('resultado').innerText = 'La predicción es: ' + data.prediction.toFixed(2);
+                }
+            })
+            .catch(error => {
+                document.getElementById('resultado').innerText = 'Error en la solicitud.';
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</head>
+<body>
+    <h1>Modelo de Predicción</h1>
+    <form id="formulario" onsubmit="predecir(event)">
+        <label for="years">Años:</label>
+        <input type="text" id="years" name="years"><br><br>
+        <label for="rating">Calificación:</label>
+        <input type="text" id="rating" name="rating"><br><br>
+        <label for="condition">Condición:</label>
+        <input type="text" id="condition" name="condition"><br><br>
+        <label for="economy">Economía:</label>
+        <input type="text" id="economy" name="economy"><br><br>
+        <label for="hp">HP:</label>
+        <input type="text" id="hp" name="hp"><br><br>
+        <input type="submit" value="Enviar">
+    </form>
+    
+    <p id="resultado"></p>
+</body>
+</html>
